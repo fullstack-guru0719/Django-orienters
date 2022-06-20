@@ -1,0 +1,211 @@
+{% extends 'connector.html' %}
+{% load static %}
+{% load orienters_extras %}
+
+{% block title %}
+Reflector
+{% endblock title %}
+
+{% block content %}
+
+{% block content_2 %}
+  <h1>Report</h1>
+
+  <h5>Reflector over "{{ report1.dream_name }}"</h5>
+
+  <div class="divider"></div>
+
+  <table>
+    <tbody>
+      <tr>
+        <td>By</td><td>{{ report.user.first_name }} {{ report.user.last_name }}</td>
+        <td>Date</td><td>{{ report.dream_date|date:"DATETIME_FORMAT" }}</td>
+      </tr>
+    </tbody>
+  </table>
+{% endblock content_2 %}
+
+
+
+
+
+
+
+
+{% block content_3 %}
+  <div class="divider"></div>
+
+
+    <div class="row pt-1">
+      <div class="col s12 m6">
+        <a class="waves-effect waves-light btn-small content_selector btn-active" data-content-id="aspects" href="#">Aspects</a>
+        <a class="waves-effect waves-light btn-small content_selector" data-content-id="words" href="#">Words</a>
+        <a class="waves-effect waves-light btn-small"
+          href="{% url 'reflector_pdf' id=report.id %}"
+          target="_blank" >PDF</a>
+      </div>
+      <div class="col s12 m6 right">
+      {% if user_id == report.user.id %}
+        <a class="waves-effect waves-light btn-small content_selector" data-content-id="share" href="#" >Share</a>
+      {% endif %}
+        <a class="waves-effect waves-light btn-small"
+          href="{% url 'connector_pdf_email' id=report.id %}"
+          id="send-to-my-email">Send to my e-mail</a>
+        <a class="waves-effect waves-light btn-small"
+          href="{% url 'reflector_index' %}" >Reflector Report List</a>
+      </div>
+    </div>
+{% endblock content_3 %}
+
+
+
+
+
+
+
+
+
+{% block content_4 %}
+
+    <div id="content-aspects" class="section content">
+
+    <table id="image-grid">
+      <tr>
+        <td>&nbsp;</td>
+      {% for value in ing_cadence %}
+        {% if value %}
+            <td><img src="{% static 'img/'|addstr:value|addstr:'.gif' %}" title="{{ value }}" width="50" height="78" /></td>
+        {% endif %}
+      {% endfor %}
+      </tr>
+
+      {% for value in ing_cadence %}
+        {% if value %}
+          {# if aspect_descriptions[key] #}
+          {% if aspect_descriptions|g_e_a_i:forloop.counter0 %}
+          <tr>
+            <td><img src="{% static 'img/h-'|addstr:value|addstr:'.gif' %}" title="{{ value }}" /></td>
+            {# for j, row in aspect_descriptions[key] #}
+            {% for aspect_description_at_key in aspect_descriptions|g_e_a_i:forloop.counter0 %}
+            <td><img
+              data-x="{{ forloop.parentloop.counter }}"
+              data-y="{{ forloop.counter }}"
+            {# if j == 1 #}
+            {% if forloop.counter == forloop.parentloop.counter %}
+              src="{% construct_static_image_url archetype_images forloop.counter0 %}"
+            {% else %}
+              src="{% static 'img/'|addstr:aspect_description_at_key.image %}"
+            {% endif %}
+              class="tooltip" /></td>
+            {% endfor %}
+          </tr>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    </table>
+
+    </div>
+{% endblock content_4 %}
+
+
+
+
+
+
+
+
+{% block content_5 %}
+    <div class="divider"></div>
+
+    <div id="content-words" class="section content hide">
+
+      <div class="row pt-1">
+        <!-- Will there always be 12 cadences ? Probably not ... -->
+      {% for value in ing_cadence %}
+        <div class="col s4 m2 cadence cadence-{{ forloop.counter0|add:5 }}">
+          <a class="waves-effect waves-light btn"
+            data-id="{{ forloop.counter0|add:5 }}" >{{ value }}</a>
+        </div>
+
+        {% if forloop.counter|divisibleby:6 %}
+        <!-- close the row every 6th element -->
+        </div>
+        <div class="row pt-1">
+        {% endif %}
+
+      {% endfor %}
+      </div>
+
+      <div class="divider"></div>
+
+    {% for aspect_description in aspect_descriptions %}
+      {% for a_d in aspect_description %}
+        <div id="description-{{a_d.cadence}}-{{ a_d.archetype }}-{{ a_d.aspect }}"
+          class="section hide cadence-detail cadence-detail-{{a_d.cadence|add:4}}">
+          <div class="row">
+            <strong>{% v_f_p_a_x_y words_left forloop.parentloop.counter0 forloop.counter0 'title_1' %} {% v_f_p_a_x_y words_right forloop.parentloop.counter0 forloop.counter0 'title_2' %}</strong>
+          </div>
+          <div class="row">
+            {% v_f_p_a_x_y words_left forloop.parentloop.counter0 forloop.counter0 'text_1' %}
+            {% v_f_p_a_x_y words_right forloop.parentloop.counter0 forloop.counter0 'text_2' %}
+            <br/>
+            {% v_f_p_a_x_y words_left forloop.parentloop.counter0 forloop.counter0 'text_3' %}
+            {% v_f_p_a_x_y words_right forloop.parentloop.counter0 forloop.counter0 'text_4' %}
+            <br/>
+            {% v_f_p_a_x_y words_left forloop.parentloop.counter0 forloop.counter0 'text_5' %}
+            {% v_f_p_a_x_y words_right forloop.parentloop.counter0 forloop.counter0 'text_6' %}
+          </div>
+        </div>
+      {% endfor %}
+    {% endfor %}
+
+    </div>
+
+
+
+
+{% include 'shared/share_report.html' %}
+
+
+
+
+    <div class="divider"></div>
+    <div class="row pt-1">
+      <div class="col s12">
+        <a class="waves-effect waves-light btn-small" href="{{ back_url }}">Back</a>
+      </div>
+    </div>
+{% endblock content_5 %}
+
+{% endblock content %}
+
+
+{% block js %}
+<script type="text/javascript">
+var g_l_o_b_a_l = {};
+
+var tds = new Array( {{ aspect_descriptions|length }} );
+{% for aspect_description in aspect_descriptions %}
+  tds[{{ forloop.counter0 }}] = new Array({{ aspect_descriptions|length }});
+  {% for aaspect_description in aspect_descriptions %}
+    var title_1 = "{% v_f_p_a_x_y words_left forloop.counter0 forloop.parentloop.counter0 'title_1' %}";
+    var title_2 = "{% v_f_p_a_x_y words_right forloop.counter0 forloop.parentloop.counter0 'title_2' %}";
+
+    var text_1 = "{% v_f_p_a_x_y words_left forloop.counter0 forloop.parentloop.counter0 'text_1' %}";
+    var text_2 = "{% v_f_p_a_x_y words_right forloop.counter0 forloop.parentloop.counter0 'text_2' %}";
+    var text_3 = "{% v_f_p_a_x_y words_left forloop.counter0 forloop.parentloop.counter0 'text_3' %}";
+    var text_4 = "{% v_f_p_a_x_y words_right forloop.counter0 forloop.parentloop.counter0 'text_4' %}";
+    var text_5 = "{% v_f_p_a_x_y words_left forloop.counter0 forloop.parentloop.counter0 'text_5' %}";
+    var text_6 = "{% v_f_p_a_x_y words_right forloop.counter0 forloop.parentloop.counter0 'text_6' %}";
+
+    var text = "<div>" + text_1 + " " + text_2 + " </div><div> " + text_3 + " " + text_4 + " </div><div> " + text_5 + " " + text_6 + "</div>";
+
+    tds[{{ forloop.parentloop.counter0 }}][{{ forloop.counter0 }}] = "<div>" + title_1 + " " + title_2 + "</div>" + text;
+
+  {% endfor %}
+{% endfor %}
+g_l_o_b_a_l.tooltip_descriptions = tds;
+</script>
+
+<script type="text/javascript" src="{% static 'js/reflector_detail.js' %}"></script>
+{% endblock js %}

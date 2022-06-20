@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+{{ stage|capfirst }} {{ target|capfirst }}
+{% endblock title %}
+
+{% block content %}
+<h1>{{ stage|capfirst }} {{ target|capfirst }}</h1>
+
+<div class="row">
+  <div class="col s4 m2">
+    <a
+      class="waves-effect waves-light btn purple {% if request.resolver_match.url_name in 'illuminator_self,illuminator_self_detail' %}darken-4 btn-active{% endif %} "
+      href="{% url 'illuminator_self' %}" >Self</a>
+  </div>
+  <div class="col s4 m2">
+    <a
+      class="waves-effect waves-light btn teal {% if request.resolver_match.url_name in 'illuminator_voice,illuminator_voice_detail' %}darken-4 btn-active{% endif %}"
+      href="{% url 'illuminator_voice' %}" >Voice</a>
+  </div>
+  <div class="col s4 m2">
+    <a
+      class="waves-effect waves-light btn red {% if request.resolver_match.url_name in 'illuminator_person,illuminator_person_detail' %}darken-4 btn-active{% endif %}"
+      href="{% url 'illuminator_person' %}" >Person</a>
+  </div>
+  <div class="col s4 m2">
+    <a
+      class="waves-effect waves-light btn indigo {% if request.resolver_match.url_name in 'illuminator_place,illuminator_place_detail' %}darken-4 btn-active{% endif %}"
+      href="{% url 'illuminator_place' %}" >Place</a>
+  </div>
+  <div class="col s4 m2">
+    <a
+      class="waves-effect waves-light btn orange {% if request.resolver_match.url_name in 'illuminator_event,illuminator_event_detail' %}darken-4 btn-active{% endif %}"
+      href="{% url 'illuminator_event' %}" >Event</a>
+  </div>
+  <div class="col s4 m2">
+    <a
+      class="waves-effect waves-light btn green {% if request.resolver_match.url_name in 'illuminator_object,illuminator_object_detail' %}darken-4 btn-active{% endif %}"
+      href="{% url 'illuminator_object' %}" >Object</a>
+  </div>
+</div>
+
+{% block content_2 %}
+<form id="illuminator-form" role="form" method="post">
+
+<div class="divider"></div>
+<div class="section">
+
+    {% csrf_token %}
+    {# form.as_p #}
+
+    {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+
+    <div class="row">
+      <div class="input-field col s12">
+        {{ form.dream_name.label_tag }}
+        {{ form.dream_name.label_tag }}
+      </div>
+      <div class="input-field col s12">
+        <input id="dream_name" name="dream_name" type="text" class="validate">
+        {# form.dream_name.label_tag #}
+        {# form.dream_name.errors #}
+      </div>
+    </div>
+
+    {% if stage == 'person' %}
+      <div class="row">
+        <div class="col s3">
+          <label>{{ form.dream_gender.label }}</label>
+        </div>
+      {% for radio in form.dream_gender %}
+        <div class="col s1">
+          <label for="{{ radio.id_for_label }}">
+              {{ radio.tag }}
+              <span>{{ radio.choice_label }}</span>
+          </label>
+        </div>
+      {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="row">
+      <div class="input-field col s12">
+        <input id="dream_description" name="dream_description" type="text" class="validate">
+        {{ form.dream_description.label_tag }}
+        {{ form.dream_description.errors }}
+      </div>
+    </div>
+
+    <div class="row">
+      <button id="continue" type="button" class="waves-effect waves-light btn-small">Continue</button>
+    </div>
+
+</div>
+
+
+
+
+<div class="section hide" id="choose-input">
+  <div class="row">
+    <div class="col s12">
+      <h6>Illumination sources</h6>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col s12">
+      {{ form.input_type.label_tag }}
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col s3">
+      &nbsp; {# input_method_choices|length #}
+    </div>
+    {% for i,j in input_method_choices %}
+      <div class="col s2">
+        {{j}}
+      </div>
+    {% endfor %}
+  </div>
+
+
+  <!--
+  'input_type_choices': konstants.input_type_choices,
+  'input_method_choices': konstants.input_method_choices,
+
+  input_type_method does not exists in the ModelForm, only here
+  -->
+  {# for radio in form.input_type #}
+  {% for g,h in input_type_choices %}
+  <div class="row">
+
+    <div class="col s3">
+      <span>{{ h }}</span>
+    </div>
+
+    {% if forloop.first %}
+        {# First of the loop #}
+
+        <div class="col s2">
+          <label for="type-1-method-1">
+            <input class="type-method" id="type-1-method-1" type="radio" name="input_type_method" value="1-1">
+            <span>&nbsp;</span>
+          </label>
+        </div>
+
+    {% else %}
+
+        {# for i in "123" #}
+        {% for i,j in input_method_choices %}
+          <div class="col s2">
+            <label for="type-{{ g }}-method-{{i}}">
+              <input type="radio" id="type-{{ g }}-method-{{i}}" name="input_type_method" value="{{g}}-{{i}}">
+              <span>&nbsp;</span>
+            </label>
+          </div>
+        {% endfor %}
+
+    {% endif %}
+
+  </div>
+  {% endfor %}
+
+  <div class="row hide" id="input-data-1">
+    <div class="col s12">
+      {# form.input_data.label_tag #}
+      <label for="input_data_1">Text</label>
+      <textarea class="input_data_raw" name="input_data_1" rows="8"></textarea>
+      {{ form.input_data.errors }}
+    </div>
+  </div>
+
+  <div class="row hide" id="input-data-2">
+    <div class="col s12">
+      <input class="input_data_raw" name="input_data_2" type="text" >
+      <label for="input_data_2">[name] (only http)</label>
+      {# form.input_data.label_tag #}
+      {{ form.input_data.errors }}
+    </div>
+  </div>
+
+  <div class="row hide" id="input-data-3">
+    <div class="col s12">
+      <input class="input_data_raw" name="input_data_3" type="file" >
+      <label for="input_data_3">[name]</label>
+      {# form.input_data.label_tag #}
+      {{ form.input_data.errors }}
+    </div>
+  </div>
+
+  <!-- the word spans from input_data_1 -->
+  <div class="row hide" id="word-spans">
+  </div>
+
+  <div class="row">
+    <button id="continue-2" type="button" class="waves-effect waves-light btn-small">Continue</button>
+  </div>
+
+</div>
+
+
+
+<div class="divider"></div>
+<div class="section hide" id="reorder-words" >
+  <h5>Rank your chosen words in order of significance by dragging and dropping them, with the most significant word at the top:</h5>
+  <div class="collection">
+    <div class="collection-item">word 1</div>
+    <div class="collection-item">word 2</div>
+    <div class="collection-item">word 3</div>
+    <div class="collection-item">word 4</div>
+  </div>
+
+  <div class="row pt-1">
+    <button type="submit" class="waves-effect waves-light btn-small">Submit</button>
+  </div>
+
+</div>
+
+</form>
+
+<div class="divider"></div>
+<div class="section">
+  <h5>Or view a report from a previously identified situation</h5>
+
+  <table>
+    <caption>Page {{ reports.number }} of {{ reports.paginator.num_pages }}</caption>
+    <thead>
+      <tr>
+          <th>#</th>
+          <th>Situation</th>
+          <th>Date</th>
+          <th>Illuminator</th>
+          <th>User</th>
+      </tr>
+    </thead>
+    <tbody>
+
+{% for report in reports %}
+
+    <tr>
+      <td>{{ report.id }}</td>
+      <td><a href="{% url detail_url id=report.id %}">{{ report.dream_name }}</a></td>
+      <td>{{ report.dream_date|date:"DATETIME_FORMAT" }}</td>
+      <td>{{ stage|capfirst }} {{ target|capfirst }}</td>
+      <td>{# report.user_id #} {{ report.user.username }}</td>
+    </tr>
+
+{% endfor %}
+    </tbody>
+  </table>
+
+{% include 'shared/pagination.html' %}
+
+</div>
+
+{% endblock content_2 %}
+
+{% endblock content %}
+
+
+
+{% block js %}
+<script src="{% static 'js/sortable.min.js' %}"></script>
+<script src="{% static 'js/illuminator.js' %}"></script>
+{% endblock js %}

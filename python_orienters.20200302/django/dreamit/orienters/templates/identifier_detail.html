@@ -1,0 +1,214 @@
+{% extends 'identifier.html' %}
+{% load static %}
+{% load orienters_extras %}
+
+{% block content_2 %}
+  <h5>Report</h5>
+  <table>
+    <tbody>
+      <tr>
+        <td>#</td><td>{{ report.id }}</td>
+      </tr>
+      <tr>
+        <td>Situation</td><td>{{ report.dream_name }}</td>
+      </tr>
+
+      {% if target == 'person' %}
+      <tr>
+        <td>Gender</td><td>{{ report.dream_gender }}</td>
+      </tr>
+      {% endif %}
+
+      <tr>
+        <td>Description</td><td>{{ report.dream_description }}</td>
+      </tr>
+      <tr>
+        <td>Date created</td><td>{{ report.dream_date|date:"DATETIME_FORMAT" }}</td>
+      </tr>
+      <tr>
+        <td>User</td><td>{# report.user_id #} {{ report.user.username }}</td>
+      </tr>
+    </tr>
+    </tbody>
+  </table>
+
+
+
+
+
+
+  <div class="row pt-1">
+    <div class="col s12 m6">
+      <a class="waves-effect waves-light btn-small content_selector" data-content-id="circle" href="#">Circle</a>
+      <a class="waves-effect waves-light btn-small content_selector" data-content-id="words" href="#">Words</a>
+      <a class="waves-effect waves-light btn-small"
+      {% if target == 'self' %}
+        href="{% url 'identifier_self_pdf' id=report.id %}"
+      {% endif %}
+      {% if target == 'voice' %}
+        href="{% url 'identifier_voice_pdf' id=report.id %}"
+      {% endif %}
+      {% if target == 'person' %}
+        href="{% url 'identifier_person_pdf' id=report.id %}"
+      {% endif %}
+      {% if target == 'place' %}
+        href="{% url 'identifier_place_pdf' id=report.id %}"
+      {% endif %}
+      {% if target == 'event' %}
+        href="{% url 'identifier_event_pdf' id=report.id %}"
+      {% endif %}
+      {% if target == 'object' %}
+        href="{% url 'identifier_object_pdf' id=report.id %}"
+      {% endif %}
+      target="_blank" >PDF</a>
+    </div>
+    <div class="col s12 m6 right">
+    {% if user_id == report.user.id %}
+      <a class="waves-effect waves-light btn-small content_selector" data-content-id="share" href="#" >Share</a>
+    {% endif %}
+      <a class="waves-effect waves-light btn-small"
+      {% if target == 'self' %}
+        href="{% url 'identifier_self_pdf_email' id=report.id %}"
+      {% endif %}
+      {% if target == 'voice' %}
+        href="{% url 'identifier_voice_pdf_email' id=report.id %}"
+      {% endif %}
+      {% if target == 'person' %}
+        href="{% url 'identifier_person_pdf_email' id=report.id %}"
+      {% endif %}
+      {% if target == 'place' %}
+        href="{% url 'identifier_place_pdf_email' id=report.id %}"
+      {% endif %}
+      {% if target == 'event' %}
+        href="{% url 'identifier_event_pdf_email' id=report.id %}"
+      {% endif %}
+      {% if target == 'object' %}
+        href="{% url 'identifier_object_pdf_email' id=report.id %}"
+      {% endif %}
+      id="send-to-my-email">Send to my e-mail</a>
+      <a class="waves-effect waves-light btn-small"
+      {% if target == 'self' %}
+        href="{% url 'identifier_self' %}"
+      {% endif %}
+      {% if target == 'voice' %}
+        href="{% url 'identifier_voice' %}"
+      {% endif %}
+      {% if target == 'person' %}
+        href="{% url 'identifier_person' %}"
+      {% endif %}
+      {% if target == 'place' %}
+        href="{% url 'identifier_place' %}"
+      {% endif %}
+      {% if target == 'event' %}
+        href="{% url 'identifier_event' %}"
+      {% endif %}
+      {% if target == 'object' %}
+        href="{% url 'identifier_object' %}"
+      {% endif %}
+      >{{ target|capfirst }} {{ stage|capfirst }} Report List</a>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div id="content-circle" class="section content">
+    <img src="{% static circle_image_url %}" usemap="#circle-map" />
+    <map name="circle-map">
+      <!--
+    	for "rect", "coords" means
+    	(top-left-x, top-left-y, bottom-right-x, bottom-right-y)
+      <area shape="rect" coords="455,150,535,165" href="organise.htm" alt="Organise">
+    	-->
+      {% for ma in map_area %}
+  	  <area shape="rect" coords="{{ma.coords|g_e_a_i:0}},{{ma.coords|g_e_a_i:1}},{{ma.coords|g_e_a_i:2}},{{ma.coords|g_e_a_i:3}}" href="#" alt="{{ma.cadence}}">
+      {% endfor %}
+  	</map>
+  </div>
+
+  <!-- <div class="divider"></div> -->
+  <div id="content-words" class="section content hide">
+    <div class="row">
+    {% for description in descriptions %}
+      <div class="col s4 m2 cadence cadence-{{ forloop.counter0|add:5 }}">
+        <a class="waves-effect waves-light btn"
+          data-id="{{ forloop.counter0|add:5 }}" >{{ description.cadence }}</a>
+      </div>
+    {% endfor %}
+    </div>
+  </div>
+
+
+  <div class="divider"></div>
+
+  {% for description in descriptions %}
+  <div id="detail-{{ forloop.counter0|add:5 }}" class="section cadence-detail hide">
+    <!--
+    <div class="row">
+      {{ description.archetype }}
+    </div>
+    <div class="row">
+      {{ description.cadence }}
+    </div>
+    -->
+    <div class="row">
+      {{ description.tagline|safe }}
+    </div>
+    <div id="tooltip-content-{{ description.cadence }}">
+      <div class="row">
+        {{ description.title|safe }}
+      </div>
+      <div class="row">
+        {{ description.report|safe }}
+      </div>
+    </div>
+    <div class="row">
+      {# description.questions|safe #}
+      {% for question in description.questions %}
+        {{ question|safe }}
+
+        {# Ignore the first element as it is just a string with value 'Question' #}
+        {% if not forloop.first %}
+          <p class="pl-1 deep-purple lighten-4 answer">
+            {# extract_answer answers description.cadence forloop.counter #}
+            {% extract_answer answers description.cadence forloop.counter0 %}
+          </p>
+          {% if user_id == report.user.id %}
+            <a class="waves-effect waves-light btn-small show-answer-form"
+              data-cadence="{{description.cadence|lower}}"
+              data-iindex="{{forloop.counter0}}"
+              href="#" >Answer</a>
+          {% endif %}
+        {% endif %}
+
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+
+
+
+
+{% include 'shared/share_report.html' %}
+{% include 'shared/answer_report.html' %}
+
+
+
+
+    <div class="divider"></div>
+    <div class="row pt-1">
+      <div class="col s12">
+        <a class="waves-effect waves-light btn-small" href="{{ back_url }}">Back</a>
+      </div>
+    </div>
+{% endblock content_2 %}
+
+
+
+
+
+
+
+
+{% block js %}
+<script type="text/javascript" src="{% static 'js/identifier_detail.js' %}"></script>
+{% endblock js %}

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Groups
+{% endblock title %}
+
+{% block content %}
+<h1>Groups</h1>
+
+
+<div class="section">
+
+  <div class="row">
+
+    <div class="input-field col s10">
+
+      <select id="group_id"
+        name="group_id"
+        class="browser-default">
+        <option value="" selected disabled>Please select</option>
+        {% for group in groups %}
+          <option value="{{group.id}}">{{group.name}}</option>
+        {% endfor %}
+      </select>
+
+    </div>
+
+  </div>
+
+  <div class="row">
+
+    <div class="input-field col s10">
+
+      <select id="user_id"
+        name="user_id"
+        class="browser-default">
+        <option value="" selected disabled>Please select</option>
+        {% for user in users %}
+          <option value="{{user.id}}">{{user.first_name}} {{user.last_name}} ({{user.username}})</option>
+        {% endfor %}
+      </select>
+
+    </div>
+
+  </div>
+
+</div>
+{% endblock content %}

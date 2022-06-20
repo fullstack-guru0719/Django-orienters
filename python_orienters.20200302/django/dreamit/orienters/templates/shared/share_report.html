@@ -1,0 +1,99 @@
+{% if user_id == report.user.id %}
+  <!-- allow sharing management if this user is the owner -->
+  <div id="content-share" class="section content hide">
+
+    <!-- <h5>Share</h5> -->
+
+    <form id="share-form">
+
+      {% csrf_token %}
+      <input type="hidden" name="stage" value="{{stage}}" />
+      <input type="hidden" name="target" value="{{target}}" />
+      <input type="hidden" name="id" value="{{id}}" />
+
+      <div class="row">
+
+        <!--
+        <div class="input-field col s2">
+          <label>
+            <input type="radio"
+              name="entity_type"
+              value="user"
+              id="entity_type_user"
+              {% if user_shared == 1 %}checked{% endif %} />
+            <span>Share with user</span>
+          </label>
+        </div>
+        -->
+
+        <div class="input-field col s2">
+          <label>
+            <span>Share with user</span>
+          </label>
+        </div>
+
+        <div class="input-field col s10">
+
+          <select id="share_with_user_id"
+            name="share_with_user_id"
+            multiple >
+            <option value="" selected disabled>Please select</option>
+            {% for user in users %}
+              <option value="{{user.id}}" {% if user.shared == 1 %}selected{% endif %}>{{user.first_name}} {{user.last_name}} ({{user.username}})</option>
+            {% endfor %}
+          </select>
+
+        </div>
+
+      </div>
+
+      <div class="row">
+
+        <!--
+        <div class="input-field col s2">
+          <label>
+              <input type="radio"
+              name="entity_type"
+              value="group"
+              id="entity_type_group"
+              {% if group_shared == 1 %}checked{% endif %} />
+            <span>Share with group</span>
+          </label>
+        </div>
+        -->
+
+        <div class="input-field col s2">
+          <label>
+            <span>Share with group</span>
+          </label>
+        </div>
+
+        <div class="input-field col s10">
+
+          <select id="share_with_group_id"
+            name="share_with_group_id"
+            multiple >
+            <option value="" selected disabled>Please select</option>
+            {% for group in groups %}
+              <option value="{{group.id}}" {% if group.shared == 1 %}selected{% endif %}>{{group.name}}</option>
+            {% endfor %}
+          </select>
+
+        </div>
+
+      </div>
+
+      <div class="row pt-1">
+        <div class="col s12">
+          <a id="save-share" class="waves-effect waves-light btn-small" href="{% url 'share_report' %}">Save</a>
+          <span id="share-result" class="blue-text text-darken-2"></span>
+        </div>
+      </div>
+
+    </form>
+
+  </div>
+
+  <div class="divider"></div>
+
+{% endif %}

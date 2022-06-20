@@ -1,0 +1,346 @@
+<!doctype html>
+{% load static %}
+{% load orienters_extras %}
+{% firstof stage|capfirst as stage_capitalize %}
+{% firstof target|capfirst|add:" "|add:stage_capitalize|add:" Report" as footer_report_title %}
+{# firstof target|capfirst|add:" "|add:stage|capfirst|add:" Report" as footer_report_title #}
+<html>
+  <head>
+    <!-- xhtml2pdf can't really process external css, so we put those here -->
+    <style>
+      /* @page title_template { */
+      @page {
+          size: a4 portrait;
+          @frame header_frame {
+              -pdf-frame-content: first_header_content;
+              left: 50pt; width: 512pt; top: 50pt; height: 40pt;
+              /* -pdf-frame-border: 1; */
+          }
+          @frame content_frame {
+              left: 50pt; width: 512pt; top: 90pt; height: 632pt;
+          }
+          @frame footer_frame {
+              -pdf-frame-content: first_footer_content;
+              left: 50pt; width: 512pt; top: 772pt; height: 40pt;
+          }
+      }
+
+      @page regular_template {
+          size: a4 portrait;
+          @frame header_frame {
+              -pdf-frame-content: header_content;
+              left: 50pt; width: 512pt; top: 50pt; height: 40pt;
+          }
+          @frame content_frame {
+              left: 50pt; width: 512pt; top: 90pt; height: 632pt;
+          }
+          @frame footer_frame {
+              -pdf-frame-content: footer_content;
+              left: 50pt; width: 512pt; top: 772pt; height: 20pt;
+          }
+      }
+
+      #first_header_content {
+        text-align:right;
+      }
+
+      #first_header_content img {
+        height:36px;
+      }
+
+      #first_header_content span {
+        font-size:3.5em;
+      }
+
+      #first_footer_content {
+        text-align:center;
+        font-size:1.5em;
+        font-weight:bold;
+      }
+
+      /* .header_content { */
+      #header_content {
+        border-bottom:solid 1px black;
+        padding-bottom:10px;
+        /* margin-bottom:10px; // no effect ? */
+      }
+
+      #header_content img {
+        height:30px;
+      }
+
+      #header_content span {
+        font-size:3em;
+      }
+
+      #footer_content {
+        border-top:solid 1px black;
+        padding-top:5px;
+        /* font-size:2em; */
+        font-weight:normal;
+      }
+
+      h1 {font-size:3em;}
+      h2 {font-size:2em;}
+      .right {text-align:right;}
+      .purple {color:purple;}
+      .orange {color:orange;}
+
+      .title-container {padding-top:300px;}
+      .title-container .large{font-size:4em;font-weight:bold;}
+      .title-container .medium{font-size:3.5em;font-weight:normal;}
+      .title-container .small{font-size:2.5em;font-weight:normal;padding-top:-0.5em;}
+
+      .subtitle-container {padding-top:180px;font-size:2em;}
+
+      .report-contents h2 {font-size:1.5em;margin-bottom:5em;}
+      .report-contents div {font-size:1.2em;}
+      .report-contents a {font-weight:bold;}
+
+      .section {page-break-before: always;}
+      .row {font-size:1.3em;}
+      .tagline, .questions { background-color:black;color:white;line-height:15px; padding-top:4px; }
+      .questions { margin:20px 2px 5px; }
+      .answer { background-color:#d1c4e9; padding:10px 10px 5px 10px; }
+
+      .section-5 .tagline,
+      .section-5 .questions {background-color:rgb(170,0,0);color:white;}
+
+      .section-6 .tagline,
+      .section-6 .questions {background-color:rgb(0,204,0);color:white;}
+
+      .section-7 .tagline,
+      .section-7 .questions {background-color:rgb(255,255,0);color:black;}
+
+      .section-8 .tagline,
+      .section-8 .questions {background-color:rgb(0,0,127);color:white;}
+
+      .section-9 .tagline,
+      .section-9 .questions {background-color:rgb(255,0,0);color:white;}
+
+      .section-10 .tagline,
+      .section-10 .questions {background-color:rgb(127,255,0);color:black;}
+
+      .section-11 .tagline,
+      .section-11 .questions {background-color:rgb(255,127,0);color:black;}
+
+      .section-12 .tagline,
+      .section-12 .questions {background-color:rgb(0,0,255);color:white;}
+
+      .section-13 .tagline,
+      .section-13 .questions {background-color:rgb(255,127,127);color:black;}
+
+      .section-14 .tagline,
+      .section-14 .questions {background-color:rgb(0,127,0);color:white;}
+
+      .section-15 .tagline,
+      .section-15 .questions {background-color:rgb(255,204,0);color:black;}
+
+      .section-16 .tagline,
+      .section-16 .questions {background-color:rgb(127,127,255);color:white;}
+
+    </style>
+  </head>
+
+  <body>
+
+
+  <!-- switch page templates -->
+  <!-- pdf:nexttemplate name="title_template" -->
+
+  <!-- Content for Static Frame 'header_frame' -->
+  <div id="first_header_content">
+    <table width="100%">
+      <tr>
+        <td align="left"><img src="{{ report_logo_full_path }}" /></td>
+        <td align="right"><span>Human Orienters</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Content for Static Frame 'footer_frame' -->
+  <div id="first_footer_content">
+    <div>Human Orienters</div>
+    <div class="orange">orienters@human.how</div>
+  </div>
+
+
+  <div class="right">
+    <div class="title-container">
+	{% block title %}
+		<span class="large purple">{{ target|capfirst }} {{ stage|capfirst }}</span> <span class="medium">Report</span>
+		<div class="small">and Questions</div>
+	{% endblock title %}
+    </div>
+    <div class="subtitle-container">
+      <span>by</span>
+      <br/>
+      <span class="purple">{# report.user_id #} {{ report.user.first_name }} {{ report.user.last_name }}</span>
+      <br/>
+      <span>
+        {% if report.dream_date %}
+          {{ report.dream_date|date:"DATE_FORMAT" }}
+        {% else %}
+          {{ report.created_at|date:"DATE_FORMAT" }}
+        {% endif %}
+      </span>
+    </div>
+  </div>
+
+
+
+
+
+
+
+  <!-- switch page templates -->
+  <pdf:nexttemplate name="regular_template" />
+
+  <!-- Content for Static Frame 'header_frame' -->
+  <div id="header_content">
+    <table width="100%">
+      <tr>
+        <td><img src="{{ report_logo_full_path }}" /></td>
+        <td align="right">
+          <span class="purple">{{ target|capfirst }} {{ stage|capfirst }}</span>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Content for Static Frame 'footer_frame' -->
+  <div id="footer_content">
+    <!-- sure using table in 2019 is lame, but xhtml2pdf has limited CSS support -->
+    <table width="100%">
+      <!--
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      -->
+      <tr>
+        <td>{{ report.user.username }}</td>
+        <td align="center">
+          <pdf:pagenumber />
+        </td>
+        <td align="right">{{ footer_report_title }}</td>
+      </tr>
+    </table>
+  </div>
+
+
+
+
+
+
+
+
+  <div class="section report-contents">
+    <h2>Report Contents</h2>
+    <!-- The next line KO-ed. Would've been nice if it worked :/ -->
+    <!-- pdf:toc -->
+    <div>Page 3 :
+      <a href="#section-0">{{ pdf_pages.title_1 }}</a>
+    </div>
+	{% block toc %}
+		<div>Page 4 : <a href="#section-1">{{ pdf_pages.title_2 }}</a></div>
+		{% for t in toc %}
+			<div>Page {{ forloop.counter0|add:5 }} : <a href="#section-{{ forloop.counter0|add:5 }}">{{ t }}</a></div>
+		{% endfor %}
+		<div>Page {{ toc|length|add:5 }} : <a href="#section-{{ toc|length|add:5 }}">{{ pdf_pages.title_3 }}</a></div>
+		<div>Page {{ toc|length|add:6 }} : <a href="#section-{{ toc|length|add:6 }}">{{ pdf_pages.title_4 }}</a></div>
+		<div>Page {{ toc|length|add:7 }} : <a href="#section-{{ toc|length|add:7 }}">Human {{ stage|capfirst }} {{ image_type|capfirst }}</a></div>
+	{% endblock toc %}
+  </div>
+
+
+
+
+  <div class="section">
+    <h2>{{ pdf_pages.title_1 }}</h2>
+    <div class="row">
+      {{ pdf_pages.page_1|safe|linebreaks }}
+    </div>
+  </div>
+
+	{% block title_2 %}
+	 <div class="section">
+		<h2>{{ pdf_pages.title_2 }}</h2>
+		<div class="row">
+		  {{ pdf_pages.page_2|safe|linebreaks }}
+		</div>
+	  </div>
+	{% endblock title_2 %}
+
+
+
+
+  {% block content_3 %}
+  	{% for description in descriptions %}
+  	<div class="divider"></div>
+  	<div class="section section-{{ forloop.counter0|add:5 }}" name="section-{{ forloop.counter0|add:5 }}">
+
+  	  <pdf:spacer height="10px" />
+
+  	  <div class="row tagline">
+  		{{ description.tagline|safe }}
+  	  </div>
+  	  <div class="row">
+  		{{ description.title|safe }}
+  	  </div>
+  	  <div class="row">
+  		{{ description.report|safe }}
+  	  </div>
+  	  <div class="row questions">Questions</div>
+  	  <div class="row">
+  		<!-- Remove the first 52 characters as they can't be
+  		styled given xhtml2pdf's CSS limitations -->
+  		{# description.questions|slice:"52:"|safe #}
+
+      {% for question in description.questions %}
+        {# Ignore the first element as it is just a string with value 'Question' #}
+        {% if not forloop.first %}
+        
+          {{ question|safe }}
+
+          <p class="light-purple answer">
+            {# extract_answer answers description.cadence forloop.counter #}
+            {% extract_answer answers description.cadence forloop.counter0 %}
+          </p>
+        {% endif %}
+
+      {% endfor %}
+
+  	  </div>
+  	</div>
+  	{% endfor %}
+  {% endblock content_3 %}
+
+
+
+
+	{% block last_3_sections %}
+	  <div class="section" id="section-{{ toc|length|add:5 }}">
+		<h2>{{ pdf_pages.title_3 }}</h2>
+		<div class="row">
+		  {{ pdf_pages.page_3|safe|linebreaks }}
+		</div>
+	  </div>
+
+	  <div class="section" id="section-{{ toc|length|add:6 }}">
+		<h2>{{ pdf_pages.title_4 }}</h2>
+		<div class="row">
+		  {{ pdf_pages.page_4|safe|linebreaks }}
+		</div>
+	  </div>
+
+	  <div class="divider"></div>
+	  <div class="section" id="section-{{ toc|length|add:7 }}">
+		<h2>Human <span class="orange">{{ stage_capitalize }}</span> {{ image_type|capfirst }}</h2>
+		<img src="{{ target_stage_image_full_path }}" />
+	  </div>
+	{% endblock last_3_sections %}
+
+</body>
+</html>

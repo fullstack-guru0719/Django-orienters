@@ -1,0 +1,181 @@
+{% extends 'connector.html' %}
+{% load static %}
+{% load orienters_extras %}
+
+{% block content %}
+
+{% block content_2 %}
+  <h1>Report</h1>
+
+  {% if report.type == 'cadence' %}
+  <h5>Cadence Connector (<span class="pink-text darken-4">{{ report.cadence|capfirst }}</span>) over <span class="pink-text darken-4">{{ report.group.name }}</span> selecting <span class="pink-text darken-4">{{ members|length }}</span> members</h5>
+  {% endif %}
+
+  {% if report.type == 'group' %}
+  <h5>Group Connector {{ report_title }} over <span class="pink-text darken-4">{{ report.group.name }}</span> selecting <span class="pink-text darken-4">{{ members|length }}</span> members</h5>
+  {% endif %}
+
+  <table>
+    <tbody>
+      <thead>
+        <tr>
+            <th>Member</th>
+            <th>Report Title</th>
+        </tr>
+      </thead>
+      {% for user_name_report_title in user_name_report_title_list %}
+      <tr>
+        <td>{{ user_name_report_title.user_full_name }}</td>
+        <td>{{ user_name_report_title.report_title }}</td>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="divider"></div>
+
+  <table>
+    <tbody>
+      <tr>
+        <td>Date</td><td>{{ report.dream_date|date:"DATETIME_FORMAT" }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+
+
+
+
+
+
+  <div class="divider"></div>
+
+
+    <div class="row pt-1">
+      <div class="col s6">
+        <a class="waves-effect waves-light btn-small content_selector" data-content-id="circle" href="#">Circle</a>
+
+        {% if report.type == 'cadence' %}
+
+        <a class="waves-effect waves-light btn-small content_selector" data-content-id="members" href="#">Members</a>
+        <a class="waves-effect waves-light btn-small content_selector" data-content-id="cadences" href="#">Cadences</a>
+
+        {% endif %}
+
+        <a class="waves-effect waves-light btn-small"
+          href="{% url 'connector_pdf' id=report.id %}"
+          target="_blank" >PDF</a>
+      </div>
+      <div class="col s6 right">
+      {% if user_id == report.user.id %}
+        <a class="waves-effect waves-light btn-small content_selector" data-content-id="share" href="#" >Share</a>
+      {% endif %}
+        <a class="waves-effect waves-light btn-small"
+          href="{% url 'connector_pdf_email' id=report.id %}"
+          id="send-to-my-email">Send to my e-mail</a>
+        <a class="waves-effect waves-light btn-small"
+          href="{% url 'connector_index' %}" >Connector Report List</a>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+    <div class="divider"></div>
+
+    <div id="content-circle" class="section content">
+      <img src="{% static circle_image_url %}" />
+    </div>
+
+    {% if report.type == 'cadence' %}
+
+    <div id="content-members" class="section content hide">
+      <div class="row pt-1">
+      {% for description in descriptions %}
+        <div class="input-field col s2 member">
+          <a class="waves-effect waves-light btn-small" data-id="{{ forloop.counter0|add:5 }}">{{description.first_name}}</a>
+        </div>
+
+        {% if forloop.counter|divisibleby:6 %}
+        <!-- close the row every 6th element -->
+        </div>
+        <div class="row pt-1">
+        {% endif %}
+
+      {% endfor %}
+      </div>
+
+    {% for description in descriptions %}
+      <div id="member-{{ forloop.counter0|add:5 }}" class="section member-detail hide">
+        <!--
+        <div class="row">
+          {{ description.archetype }}
+        </div>
+        <div class="row">
+          {{ description.cadence }}
+        </div>
+        -->
+        <div class="row">
+          {{description.first_name}} : {{ description.title|safe }}
+        </div>
+        <div class="row">
+          {{ description.report|safe }}
+        </div>
+      </div>
+    {% endfor %}
+
+    </div><!-- end : id="content-members" -->
+
+    <div id="content-cadences" class="section content hide">
+
+      {% include 'shared/cadence_buttons.html' %}
+
+    </div>
+
+    <form id="connector-form" role="form" method="post" action="{% url 'copy_connector' %}">
+      {% csrf_token %}
+      <input type="hidden" name="source_id" value="{{ report.id }}" />
+      <input type="hidden" name="cadence" value="" />
+    </form>
+
+    {% endif %}
+
+
+
+
+{% include 'shared/share_report.html' %}
+
+
+
+
+    <div class="divider"></div>
+    <div class="row pt-1">
+      <div class="col s12">
+        <a class="waves-effect waves-light btn-small" href="{{ back_url }}">Back</a>
+      </div>
+    </div>
+{% endblock content_2 %}
+
+{% endblock content %}
+
+
+{% block js %}
+<script type="text/javascript">
+  var ajax_obj = {};
+  ajax_obj.cadence = '{{ report.cadence }}';
+  {% if report.cadence_max %}
+  ajax_obj.cadence_max = {{ report.cadence_max }};
+  {% else %}
+  ajax_obj.cadence_max = 0;
+  {% endif %}
+</script>
+<!-- <script type="text/javascript" src="{% static 'js/illuminator_detail.js' %}"></script> -->
+<script type="text/javascript" src="{% static 'js/connector_detail.js' %}"></script>
+{% endblock js %}

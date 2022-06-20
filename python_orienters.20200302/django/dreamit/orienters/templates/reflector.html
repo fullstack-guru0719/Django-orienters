@@ -1,0 +1,226 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Reflector
+{% endblock title %}
+
+{% block content %}
+<h1>Reflector</h1>
+<h5>Please choose a Reflector type</h5>
+
+<div class="row">
+  <div class="col s6 m3">
+    <a
+      id="self-self"
+      class="reflector-type waves-effect waves-light btn blue btn-active"
+      href="javascript:alert('TODO');" >Self : Self</a>
+  </div>
+  <div class="col s6 m3">
+    <a
+      id="self-person"
+      class="reflector-type waves-effect waves-light btn black"
+      href="javascript:alert('TODO');" >Self : Person</a>
+  </div>
+  <div class="col s6 m3">
+    <a
+      id="person-self"
+      class="reflector-type waves-effect waves-light btn black"
+      href="javascript:alert('TODO');" >Person : Self</a>
+  </div>
+  <div class="col s6 m3">
+    <a
+      id="person-person"
+      class="reflector-type waves-effect waves-light btn black"
+      href="javascript:alert('TODO');" >Person : Person</a>
+  </div>
+</div>
+
+{% block content_2 %}
+
+<h5>Choose one report to find your reflections</h5>
+<div class="divider" ></div>
+
+<form id="reflector-form" role="form" method="post">
+
+  {% csrf_token %}
+
+  <input type="hidden" name="type" value="self|self">
+
+  <!-- <input type="hidden" name="self" > -->
+  <input type="hidden" name="person1" >
+  <input type="hidden" name="person2" >
+
+
+
+  <div class="row">
+    <!-- can be self or person1 -->
+    <div id="left-column" class="col s6">
+
+      <div id="self-column">
+    {% for uzzer in uzzers %}
+      <h6>{{ uzzer.first_name }}</h6>
+
+      {{ uzzer.report_count }} found
+      <div class="divider" ></div>
+
+      <div class="reports">
+      {% for report in uzzer.reports %}
+        <label>
+          <input type="radio" name="self" value="{{ report.stage }}|{{ report.target }}|{{ report.id }}" />
+          <span class="slanted">{{ report.stage }}</span>&nbsp:&nbsp;<span class="blue-text">{{ report.dream_name }}</span>
+          <div class="ml-3 black-text">{{ report.dream_date|date:"DATETIME_FORMAT" }}</div>
+        </label>
+      {% endfor %}
+      </div>
+
+    {% endfor %}
+      </div>
+
+      <!-- Only display when relevant -->
+      <div id="person1-column" class="hide">
+        <select name="person1_member">
+          <option value="" selected disabled>Please select a user</option>
+          {% for group_member in group_members %}
+          <option value="{{group_member.id}}">{{group_member.first_name}} {{group_member.last_name}}</option>
+          {% endfor %}
+        </select>
+
+        <div class="reports">
+          <h6>{{ uzzer.first_name }}</h6>
+
+          {{ uzzer.report_count }} found
+          <div class="divider" ></div>
+          {% for report in uzzer.reports %}
+            <label>
+              <input type="radio" name="self" value="{{ report.stage }}|{{ report.target }}|{{ report.id }}" />
+              <span class="slanted">{{ report.stage }}</span>&nbsp:&nbsp;<span class="blue-text">{{ report.dream_name }}</span>
+              <div class="ml-3 black-text">{{ report.dream_date|date:"DATETIME_FORMAT" }}</div>
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div><!-- end : #left-column -->
+    <div id="right-column" class="col s6">
+      <!--
+      can be self or person2.
+
+      for person:self, clone self from #left-column onto here.
+      -->
+
+
+      <!-- Only display when relevant -->
+      <div id="person2-column" class="hide">
+        <select name="person2_member">
+          <option value="" selected disabled>Please select a user</option>
+          {% for group_member in group_members %}
+          <option value="{{group_member.id}}">{{group_member.first_name}} {{group_member.last_name}}</option>
+          {% endfor %}
+        </select>
+
+        <div class="reports">
+          <h6>{{ uzzer.first_name }}</h6>
+
+          {{ uzzer.report_count }} found
+          <div class="divider" ></div>
+          {% for report in uzzer.reports %}
+            <label>
+              <input type="radio" name="self" value="{{ report.stage }}|{{ report.target }}|{{ report.id }}" />
+              <span class="slanted">{{ report.stage }}</span>&nbsp:&nbsp;<span class="blue-text">{{ report.dream_name }}</span>
+              <div class="ml-3 black-text">{{ report.dream_date|date:"DATETIME_FORMAT" }}</div>
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <div class="row">
+    <div class="col s1 offset-s11 right">
+      <button type="submit" class="waves-effect waves-light btn-small">Go</button>
+    </div>
+  </div>
+
+</form>
+
+
+
+
+
+
+
+
+
+<div class="divider"></div>
+<div class="section">
+  <h5>Or view a report from a previously identified situation</h5>
+
+  <table>
+    <caption>Page {{ reports.number }} of {{ reports.paginator.num_pages }}</caption>
+    <thead>
+      <tr>
+          <th>#</th>
+          <th>&nbsp;</th>
+          <th>Type</th>
+          <th>Date</th>
+          <th>By</th>
+      </tr>
+    </thead>
+    <tbody>
+
+{% for report in reports %}
+
+    <tr>
+      <td>{{ report.id }}</td>
+      <td><a href="{% url 'reflector_detail' id=report.id %}">{{ report.derived_name }}</a></td>
+      <td>{{ report.type }}</td>
+      <td>{{ report.dream_date|date:"DATETIME_FORMAT" }}</td>
+      <td>{{ report.user.username }}</td>
+    </tr>
+
+{% endfor %}
+    </tbody>
+  </table>
+
+  <!--
+  <ul class="pagination">
+    <li class="disabled">
+      <a href="#!">
+        <i class="material-icons">chevron_left</i>
+        &#60;
+      </a>
+    </li>
+    <li class="active"><a href="#!">1</a></li>
+    <li class="waves-effect"><a href="#!">2</a></li>
+    <li class="waves-effect"><a href="#!">3</a></li>
+    <li class="waves-effect"><a href="#!">4</a></li>
+    <li class="waves-effect"><a href="#!">5</a></li>
+    <li class="waves-effect">
+      <a href="#!">
+        <i class="material-icons">chevron_right</i>
+        &#62;
+      </a>
+    </li>
+  </ul>
+  -->
+
+{% include 'shared/pagination.html' %}
+
+</div>
+
+{% endblock content_2 %}
+
+{% endblock content %}
+
+{% block js %}
+<script type="text/javascript">
+  var ajax_obj = {};
+  ajax_obj.reports_by_user_url = '{% url 'reports_by_user' user_id=0 %}';
+  ajax_obj.calculate_cadence_max_url = '{% url 'calculate_cadence_max' %}';
+</script>
+<script src="{% static 'js/reflector.js' %}"></script>
+{% endblock js %}

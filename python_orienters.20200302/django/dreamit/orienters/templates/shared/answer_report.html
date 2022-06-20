@@ -1,0 +1,32 @@
+{% if user_id == report.user.id %}
+  <div id="content-answer-form" class="section content hide">
+
+    <!-- <h5>Answer</h5> -->
+
+    <form id="answer-form">
+
+      {% csrf_token %}
+      <input type="hidden" name="stage" value="{{stage}}" />
+      <input type="hidden" name="target" value="{{target}}" />
+      <input type="hidden" name="id" value="{{id}}" />
+      <input type="hidden" name="cadence" value="" />
+      <input type="hidden" name="iindex" value="" />
+
+      <div class="row">
+        <div class="input-field col s12">
+          <textarea id="text" name="text" class="materialize-textarea"></textarea>
+          <label for="text">Answer</label>
+        </div>
+      </div>
+
+      <div class="row pt-1">
+        <div class="col s12">
+          <a id="save-answer" class="waves-effect waves-light btn-small" href="{% url 'answer_report' %}">Save answer</a>
+          <span id="answer-result" class="blue-text text-darken-2"></span>
+        </div>
+      </div>
+
+    </form>
+
+  </div>
+{% endif %}

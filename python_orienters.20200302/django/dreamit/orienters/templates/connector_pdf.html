@@ -1,0 +1,38 @@
+{% extends 'identifier_pdf.html' %}
+
+{% block title %}
+	<span class="large purple">{{ target|capfirst }} {{ stage|capfirst }}</span> <span class="medium">Report</span>
+{% endblock title %}
+
+{% block toc %}
+	{% if report.type == 'cadence' %}
+		<div>Page 4 : <a href="#section-1">Human {{ report.type|capfirst }} {{ image_type|capfirst }} - {{ report.cadence|capfirst }}</a></div>
+	{% endif %}
+	{% if report.type == 'group' %}
+		<div>Page 4 : <a href="#section-1">Human {{ report.type|capfirst }} {{ image_type|capfirst }}</a></div>
+	{% endif %}
+{% endblock toc %}
+
+
+{% block title_2 %}
+	<!-- intentionally empty -->
+{% endblock title_2 %}
+
+
+{% block content_3 %}
+	<!-- intentionally empty -->
+{% endblock content_3 %}
+
+
+{% block last_3_sections %}
+	<div class="divider"></div>
+	<div class="section" id="section-1">
+		{% if report.type == 'cadence' %}
+			<h2>Human <span class="orange">{{ report.type|capfirst }}</span> {{ image_type|capfirst }} - {{ report.cadence|capfirst }}</h2>
+		{% endif %}
+		{% if report.type == 'group' %}
+			<h2>Human <span class="orange">{{ report.type|capfirst }}</span> {{ image_type|capfirst }}</h2>
+		{% endif %}
+		<img src="{{ target_stage_image_full_path }}" />
+	</div>
+{% endblock last_3_sections %}

@@ -1,0 +1,84 @@
+{% extends 'reflector_detail.html' %}
+{% load static %}
+{% load orienters_extras %}
+
+
+
+
+
+
+
+{% block content_2 %}
+  <h1>Report</h1>
+
+  <h5>{{ report1.dream_name }} vs {{ report2.dream_name }} </h5>
+
+  <div class="divider"></div>
+
+  <table>
+    <tbody>
+      <tr>
+        <td>By</td><td>{{ report.user.first_name }} {{ report.user.last_name }}</td>
+        <td>Date</td><td>{{ report.dream_date|date:"DATETIME_FORMAT" }}</td>
+      </tr>
+    </tbody>
+  </table>
+{% endblock content_2 %}
+
+
+
+
+
+
+
+
+
+
+
+
+{% block content_4 %}
+
+    <div id="content-aspects" class="section content">
+
+    <table id="image-grid">
+      <tr>
+        <td class="cell-with-name">{{ first_name1 }} and {{ first_name2 }}</td>
+      {% for value in ing_cadence %}
+        {% if value %}
+            <td><img src="{% static 'img/'|addstr:value|addstr:'.gif' %}" title="{{ value }}" width="50" height="78" /></td>
+        {% endif %}
+      {% endfor %}
+        <td class="cell-with-name-rotated">{{ first_name2 }}</td>
+      </tr>
+
+      {% for value in ing_cadence %}
+        {% if value %}
+          {# if aspect_descriptions[key] #}
+          {% if aspect_descriptions|g_e_a_i:forloop.counter0 %}
+          <tr>
+            <td><img src="{% static 'img/h-'|addstr:value|addstr:'.gif' %}" title="{{ value }}" /></td>
+            {# for j, row in aspect_descriptions[key] #}
+            {% for aspect_description_at_key in aspect_descriptions|g_e_a_i:forloop.counter0 %}
+            <td><img
+              data-x="{{ forloop.parentloop.counter }}"
+              data-y="{{ forloop.counter }}"
+              src="{% static 'img/'|addstr:aspect_description_at_key.image %}"
+              class="tooltip" /></td>
+            {% endfor %}
+            <td><img src="{% construct_static_image_url archetype_images2 forloop.counter0 %}" /></td>
+          </tr>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+
+      <tr>
+        <td class="cell-with-name">{{ first_name1 }}</td>
+      {% for value in archetype_images1 %}
+        <td><img src="{% static 'img/'|addstr:value %}" /></td>
+        {% endfor %}
+      </tr>
+    </table>
+
+    </div>
+
+{% endblock content_4 %}

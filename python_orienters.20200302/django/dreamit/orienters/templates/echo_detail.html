@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Echo
+{% endblock title %}
+
+{% block content %}
+<h1>Echo Answer</h1>
+
+<div class="section">
+
+  <div class="row">
+    <div class="input-field col s12 m2">
+      <label>Echo Name</label>
+    </div>
+    <div class="input-field col s12 m10">
+      <span>{{source_echo.name}}</span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="input-field col s12 m2">
+      <label>Description</label>
+    </div>
+    <div class="input-field col s12 m10">
+      <span>{{source_echo.description}}</span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="input-field col s12 m2">
+      <label>Question</label>
+    </div>
+    <div class="input-field col s12 m10">
+      <span>{{source_echo.question}}</span>
+    </div>
+  </div>
+
+{% if not request.user.is_superuser %}
+  <div class="row">
+    <div class="input-field col s12 m2">
+      <label>Answer</label>
+    </div>
+    <div class="input-field col s12 m10">
+      <span>{{echo.input_data}}</span>
+    </div>
+  </div>
+{% endif %}
+
+</div>
+
+<div class="row pt-1">
+  <div class="col s12">
+    <a class="waves-effect waves-light btn-small content_selector" data-content-id="words" href="#">Words</a>
+    <a class="waves-effect waves-light btn-small content_selector btn-active" data-content-id="graph" href="#">Graph</a>
+    <a class="waves-effect waves-light btn-small" href="{% url 'echo_pdf' id=source_echo.id %}" target="_blank" >PDF</a>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div id="content-words" class="section content hide">
+
+{% for submission in submissions %}
+  <div id="submission-{{submission.user.id}}"
+    class="cadence-detail">
+    <div class="row">
+      <strong>{{submission.user}}</strong> <i>{{ submission.created_at }}</i>
+    </div>
+    <div class="row">
+      {{submission.text}}
+    </div>
+  </div>
+{% endfor %}
+
+</div>
+
+
+<div id="content-graph" class="section content">
+  <!-- <img src="{% static '/tmp/placeholder.jpg' %}" /> -->
+</div>
+
+<!-- <img id="png-output" /> -->
+
+{% endblock content %}
+
+{% block js %}
+<script type="text/javascript" src="{% static 'js/highcharts.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/highcharts-more.js' %}"></script>
+<!-- // // Enable if you'd like to export the chart as an image. Can't save to the server though :(
+<script type="text/javascript" src="{% static 'js/modules/exporting.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/modules/export-data.js' %}"></script>
+-->
+
+<script type="text/javascript">
+  var submissions = {{submissions|safe}};
+  var chart_options = {{chart_options|safe}};
+</script>
+<script type="text/javascript" src="{% static 'js/echo_detail.js' %}"></script>
+{% endblock js %}

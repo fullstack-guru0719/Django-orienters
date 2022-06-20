@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load orienters_extras %}
+
+{% block title %}
+Connector
+{% endblock title %}
+
+{% block content %}
+<h1>Connector</h1>
+
+<form id="connector-form" role="form" method="post">
+
+  {% csrf_token %}
+  <input type="hidden" name="connector_type" />
+  <!-- FYI, cadence is empty for connector_type 'group' -->
+  <input type="hidden" name="cadence" />
+  <!-- Set via an Ajax call to connector.calculate_cadence_max -->
+  <input type="hidden" name="cadence_max" />
+  <!-- <input type="hidden" name="selected_reports[]" /> -->
+
+  <div class="divider"></div>
+
+  <div class="section">
+
+    <div class="row">
+
+      <div class="input-field col s12">
+
+        <select name="group_id">
+          <option value="" selected disabled>Please select a team</option>
+          {% for group in groups %}
+            <option value="{{group.id}}">{{group.name}}</option>
+          {% endfor %}
+        </select>
+        <!-- <label>Please select a team</label> -->
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div id="group-result-meta" class="section">
+  </div>
+
+  <div id="group-result" class="section">
+  </div>
+
+  <div id="submit-buttons" class="section hide">
+    <h4>Select a type of connector</h4>
+
+    <div class="row pt-1">
+      To find the <strong>Group connector</strong> click the following button:
+    </div>
+    <div class="row">
+      <button id="connector-group-submit" type="button" class="waves-effect waves-light btn-small">Find the group connector</button>
+    </div>
+
+    <div class="row pt-1">
+      To find the <strong>Cadence connector</strong> click the following button:
+    </div>
+    <div class="row">
+      <button id="connector-cadence-submit" type="button" class="waves-effect waves-light btn-small">Select the cadence connector</button>
+    </div>
+    {% include 'shared/cadence_buttons.html' %}
+  </div>
+
+</form>
+
+
+
+<div class="divider"></div>
+<div class="section">
+  <h5>Or view a report from a previously identified situation</h5>
+
+  <table>
+    <caption>Page {{ reports.number }} of {{ reports.paginator.num_pages }}</caption>
+    <thead>
+      <tr>
+          <th>#</th>
+          <th>Situation</th>
+          <th>Date</th>
+          <th>User</th>
+      </tr>
+    </thead>
+    <tbody>
+
+{% for connector in reports %}
+
+    <tr>
+      <td>{{ connector.id }}</td>
+      <td><a href="{% url detail_url id=connector.id %}">{{ connector.type|capfirst }} connector over {{ connector.group.name }} selecting {{ connector.c_count }} members</a></td>
+      <td>{{ connector.dream_date|date:"DATETIME_FORMAT" }}</td>
+      <td>{# connector.user_id #} {{ connector.user.first_name }} {{ connector.user.last_name }}</td>
+    </tr>
+
+{% endfor %}
+    </tbody>
+  </table>
+
+{% include 'shared/pagination.html' %}
+
+</div>
+
+{% endblock content %}
+
+
+{% block js %}
+<script type="text/javascript">
+  var ajax_obj = {};
+  ajax_obj.reports_by_group_url = '{% url 'reports_by_group' group_id=0 %}';
+  ajax_obj.calculate_cadence_max_url = '{% url 'calculate_cadence_max' %}';
+</script>
+<script src="{% static 'js/connector.js' %}"></script>
+{% endblock js %}

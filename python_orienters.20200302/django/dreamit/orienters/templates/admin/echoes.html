@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Echoes
+{% endblock title %}
+
+{% block content %}
+<h1>{% if id is None %}Create{% else %}Edit{% endif %} Echo</h1>
+
+<form role="form" method="post" action="{% url 'manage_echoes' %}">
+  {% csrf_token %}
+
+  {# form.as_p #}
+
+  <!-- <input type="hidden" name="id" value="{#form.id.value#}" /> -->
+  <input type="hidden" name="id" value="{{id|default:''}}" />
+  <input type="hidden" name="type" value="{{ form.type.value|default:'self' }}" />
+
+  <div class="row">
+    <div class="input-field col s12 m2">
+      <label>Group</label>
+    </div>
+    <div class="input-field col s12 m10">
+      <!-- <input type="text" name="group" value="{# form.group_id #}"/> -->
+
+      <select id="group"
+        name="group" >
+        <option value="" selected disabled>Chioose the group for this Echo</option>
+        {% for group in groups %}
+          <option value="{{group.id}}" {% if group.id == form.group.value %}selected{% endif %}>{{group.name}}</option>
+        {% endfor %}
+      </select>
+
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="input-field col s12 m2">
+      <label>Name</label>
+    </div>
+    <div class="input-field col s12 m10">
+      <input type="text" name="name" value="{{form.name.value|default:''}}" placeholder="Name your Echo"/>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="input-field col s12 m2">
+      <label>Description</label>
+    </div>
+    <div class="input-field col s12 m10">
+      <input type="text" name="description" value="{{form.description.value|default:''}}" placeholder="Describe the context for the question you are setting"/>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="input-field col s12 m2">
+      <label>Question</label>
+    </div>
+    <div class="input-field col s12 m10">
+      <input type="text" name="question" value="{{form.question.value|default:''}}" placeholder="Set the question for this Echo"/>
+    </div>
+  </div>
+
+
+
+  <div class="row pt-1">
+    <button type="submit" class="waves-effect waves-light btn-small">Save</button>
+  </div>
+
+</form>
+
+
+<div class="divider"></div>
+<div class="section">
+  <h5>Or edit/view an Echo from a previous situation</h5>
+
+  <table>
+    <caption>Page {{ reports.number }} of {{ reports.paginator.num_pages }}</caption>
+    <thead>
+      <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Group</th>
+          <th>Created at</th>
+          <th>&nbsp;</th>
+      </tr>
+    </thead>
+    <tbody>
+
+{% for report in reports %}
+
+    <tr>
+      <td>{{ report.id }}</td>
+      <td>{{ report.name }}</td>
+      <td>{# report.group #} {{ report.group.name }}</td>
+      <td>{{ report.created_at|date:"DATETIME_FORMAT" }}</td>
+      <td><a href="{% url edit_url id=report.id %}">Edit</a>&nbsp;|&nbsp;<a href="{% url view_url id=report.id %}">View</a></td>
+    </tr>
+
+{% endfor %}
+    </tbody>
+  </table>
+
+{% include 'shared/pagination.html' %}
+
+</div>
+
+{% block content_2 %}
+{% endblock content_2 %}
+
+{% endblock content %}
+
+
+{% block js %}
+<script src="{% static 'js/admin_echo.js' %}"></script>
+{% endblock js %}

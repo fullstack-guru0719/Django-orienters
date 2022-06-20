@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Echo
+{% endblock title %}
+
+{% block content %}
+<h1>Echo</h1>
+
+<div class="section">
+  <h5>Pick an Echo to answer below</h5>
+
+  <table>
+    <caption>Page {{ reports.number }} of {{ reports.paginator.num_pages }}</caption>
+    <thead>
+      <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Created at</th>
+      </tr>
+    </thead>
+    <tbody>
+
+{% for report in reports %}
+
+    <tr>
+      <td>{{ report.id }}</td>
+      <td><a href="{% url answer_url id=report.id %}">{{ report.name }}</a></td>
+      <td>{{ report.created_at|date:"DATETIME_FORMAT" }}</td>
+      <td>
+        <a href="{% url answer_url id=report.id %}">Answer</a>
+        |<a href="{% url detail_url id=report.id %}">View</a>
+      </td>
+    </tr>
+
+{% endfor %}
+    </tbody>
+  </table>
+
+{% include 'shared/pagination.html' %}
+
+</div>
+
+{% block content_2 %}
+{% endblock content_2 %}
+
+{% endblock content %}
+
+
+{% block js %}
+{% endblock js %}

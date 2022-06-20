@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+PDF Pages
+{% endblock title %}
+
+{% block content %}
+<h1>PDF Pages - {{target|title}} {{stage|title}}</h1>
+
+<form role="form" method="post">
+  {% csrf_token %}
+
+  <input type="hidden" name="id" value="{{pdf_page.id}}" />
+  <input type="hidden" name="stage" value="{{pdf_page.stage}}" />
+  <input type="hidden" name="target" value="{{pdf_page.target}}" />
+
+
+
+  <h3>Page 1</h3>
+
+  <div class="row">
+    <div class="input-field col s12">
+      <input type="text" name="title_1" value="{{pdf_page.title_1}}"/>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="input-field col s12">
+      <textarea id="page_1" name="page_1" class="materialize-textarea">{{pdf_page.page_1}}</textarea>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+
+
+{# if pdf_page.title_2 is not None #}
+{% if pdf_page.title_2 and pdf_page.title_2.strip %}
+
+  <h3>Page 2</h3>
+
+  <div class="row">
+    <div class="input-field col s12">
+      <input type="text" name="title_2" value="{{pdf_page.title_2}}"/>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="input-field col s12">
+      <textarea id="page_2" name="page_2" class="materialize-textarea">{{pdf_page.page_2}}</textarea>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+{% endif %}
+
+
+
+{# if pdf_page.title_3 is not None #}
+{% if pdf_page.title_3 and pdf_page.title_3.strip %}
+
+  <h3>Page 3</h3>
+
+  <div class="row">
+    <div class="input-field col s12">
+      <input type="text" name="title_3" value="{{pdf_page.title_3}}"/>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="input-field col s12">
+      <textarea id="page_3" name="page_3" class="materialize-textarea">{{pdf_page.page_3}}</textarea>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+{% endif %}
+
+
+
+{# if pdf_page.title_4 is not None #}
+{% if pdf_page.title_4 and pdf_page.title_4.strip %}
+
+  <h3>Page 4</h3>
+
+  <div class="row">
+    <div class="input-field col s12">
+      <input type="text" name="title_4" value="{{pdf_page.title_4}}"/>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="input-field col s12">
+      <textarea id="page_4" name="page_4" class="materialize-textarea">{{pdf_page.page_4}}</textarea>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+{% endif %}
+
+
+
+{# if pdf_page.title_5 is not None #}
+{% if pdf_page.title_5 and pdf_page.title_5.strip %}
+
+  <h3>Page 5</h3>
+
+  <div class="row">
+    <div class="input-field col s12">
+      <input type="text" name="title_5" value="{{pdf_page.title_5}}"/>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="input-field col s12">
+      <textarea id="page_5" name="page_5" class="materialize-textarea">{{pdf_page.page_5}}</textarea>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+{% endif %}
+
+
+
+  <div class="row pt-1">
+    <button type="submit" class="waves-effect waves-light btn-small">Save</button>
+  </div>
+
+</form>
+{% endblock content %}
+</div>

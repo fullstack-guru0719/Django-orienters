@@ -1,0 +1,51 @@
+<!doctype html>
+{% load static %}
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+    {% block title %}
+    {{ page_title|default:"Orienters" }}
+    {% endblock title %}
+    </title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/materialize.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+  </head>
+
+  <body>
+    <div class="navbar-fixed">
+      <nav>
+        <div class="nav-wrapper">
+          <a href="#" class="brand-logo">Orienters</a>
+          <a href="#" data-target="mobile-menu" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+          <ul id="nav-mobile" class="right hide-on-med-and-down">
+            {% include 'shared/menu_items.html' with is_large_screen=1 %}
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    <ul class="sidenav" id="mobile-menu">
+      <li><a class="sidenav-close" href="#!"><i class="material-icons">highlight_off</i></a></li>
+      {% include 'shared/menu_items.html' with is_large_screen=0 %}
+    </ul>
+
+    <section class="section">
+      <div class="container">
+        {% block content %}
+        <p>Placeholder text in base template. Replace with page content.</p>
+        {% endblock content %}
+      </div>
+    </section>
+    <script src="{% static 'js/materialize.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/common_menu.js' %}"></script>
+  {% if request.user.is_superuser %}
+    <script type="text/javascript" src="{% static 'js/admin_menu.js' %}"></script>
+  {% endif %}
+{% block js %}
+{% endblock js %}
+  </body>
+</html>

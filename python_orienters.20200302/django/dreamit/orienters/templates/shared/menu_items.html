@@ -1,0 +1,74 @@
+
+{% if request.user.is_authenticated %}
+  {% if request.user.is_superuser %}
+    <!-- if the first part of the url matches, highlight the link -->
+    <!-- <li {% if '/groups' in request.path %}class="active"{% endif %}><a href="{% url 'manage_groups' %}" >Groups</a></li> -->
+    <li {% if '/echoes' in request.path %}class="active"{% endif %}><a href="{% url 'manage_echoes' %}" >Echoes</a></li>
+
+      <!-- 'PDF Pages' Dropdown Structure -->
+      {% if is_large_screen == 1 %}
+        <li {% if '/pdf_pages' in request.path %}class="active"{% endif %}>
+          <a class="dropdown-trigger" href="#!" data-target="dropdown-pdf-pages">PDF Pages <i class="material-icons right">arrow_drop_down</i></a>
+        </li>
+        <ul id="dropdown-pdf-pages" class="dropdown-content">
+      {% else %}
+
+        <li class="divider"></li>
+
+      {% endif %}
+
+        <li><a href="{% url 'pdf_pages_identifier_self' %}">Self Identifier</a></li>
+        <li><a href="{% url 'pdf_pages_identifier_voice' %}">Voice Identifier</a></li>
+        <li><a href="{% url 'pdf_pages_identifier_person' %}">Person Identifier</a></li>
+        <li><a href="{% url 'pdf_pages_identifier_place' %}">Place Identifier</a></li>
+        <li><a href="{% url 'pdf_pages_identifier_event' %}">Event Identifier</a></li>
+        <li><a href="{% url 'pdf_pages_identifier_object' %}">Object Identifier</a></li>
+        <li class="divider"></li>
+        <li><a href="{% url 'pdf_pages_illuminator_self' %}">Self Illuminator</a></li>
+        <li><a href="{% url 'pdf_pages_illuminator_voice' %}">Voice Illuminator</a></li>
+        <li><a href="{% url 'pdf_pages_illuminator_person' %}">Person Illuminator</a></li>
+        <li><a href="{% url 'pdf_pages_illuminator_place' %}">Place Illuminator</a></li>
+        <li><a href="{% url 'pdf_pages_illuminator_event' %}">Event Illuminator</a></li>
+        <li><a href="{% url 'pdf_pages_illuminator_object' %}">Object Illuminator</a></li>
+        <li class="divider"></li>
+        <li><a href="{% url 'pdf_pages_connector_group' %}">Group Connector</a></li>
+        <li><a href="{% url 'pdf_pages_connector_cadence' %}">Cadence Connector</a></li>
+        <li class="divider"></li>
+        <li><a href="{% url 'pdf_pages_reflector_self_self' %}">Self:Self Reflector</a></li>
+        <li><a href="{% url 'pdf_pages_reflector_self_person' %}">Self:Person Reflector</a></li>
+        <li><a href="{% url 'pdf_pages_reflector_person_self' %}">Person:Self Reflector</a></li>
+        <li><a href="{% url 'pdf_pages_reflector_person_person' %}">Person:Person Reflector</a></li>
+
+      {% if is_large_screen == 1 %}
+        </ul>
+      {% endif %}
+
+  {% else %}
+    <!-- if the first part of the url matches, highlight the link -->
+    <li {% if '/identifier' in request.path %}class="active"{% endif %}><a href="{% url 'identifier_self' %}" >Identifier</a></li>
+    <li {% if '/illuminator' in request.path %}class="active"{% endif %}><a href="{% url 'illuminator_self' %}">Illuminator</a></li>
+    <li {% if '/connector' in request.path %}class="active"{% endif %}><a href="{% url 'connector_index' %}">Connector</a></li>
+    <li {% if '/reflector' in request.path %}class="active"{% endif %}><a href="{% url 'reflector_index' %}">Reflector</a></li>
+    <li {% if '/echo' in request.path %}class="active"{% endif %}><a href="{% url 'echo_index' %}">Echo</a></li>
+  {% endif %}
+<li id="logged-in-user-name">
+  {# request.user.first_name #}
+  {{ request.user.username }}
+  {% if request.user.is_superuser %}
+  <small class="amber-text">[admin]</small>
+  {% endif %}
+</li>
+<li><a href="{% url 'logout' %}" title="logout">{% if is_large_screen == 0 %}Logout{% endif %} <i class="material-icons right">logout</i> </a></li>
+
+  {% if is_large_screen == 0 %}
+  <!-- workaround for hidden menu items when the page height is small -->
+  <li>&nbsp;</li>
+  <li>&nbsp;</li>
+  <li>&nbsp;</li>
+  {% endif %}
+
+{% else %}
+  {% if not 'login' in request.path %}
+<li><a href="{% url 'login' %}">Login</a></li>
+  {% endif %}
+{% endif %}

@@ -1,0 +1,49 @@
+{% extends 'identifier_pdf.html' %}
+
+{% block title %}
+	<span class="large purple">{{ target|capfirst }} {{ stage|capfirst }}</span> <span class="medium">Report</span>
+{% endblock title %}
+
+{% block toc %}
+	<div>Page 4 : <a href="#section-echo-submissions">Echo Submissions</a></div>
+{% endblock toc %}
+
+
+{% block title_2 %}
+	<!-- intentionally empty -->
+{% endblock title_2 %}
+
+
+{% block content_3 %}
+	<div class="divider"></div>
+
+	<div class="section" id="section-echo-submissions">
+		<h2>Echo Submissions</h2>
+
+	  <pdf:spacer height="10px" />
+
+		{% for submission in submissions %}
+	    <div id="submission-{{submission.user.id}}" class="row">
+				<!-- <strong>{# submission.user.first_name #} {# submission.user.last_name #}</strong> <i>{# submission.created_at|date:"DATETIME_FORMAT" #}</i> -->
+				<strong>{{submission.user}}</strong> <i>{{submission.created_at}}</i>
+	    </div>
+	    <div class="row">
+	      {{submission.text}}
+	    </div>
+
+  	  <pdf:spacer height="20px" />
+
+		{% endfor %}
+	</div>
+{% endblock content_3 %}
+
+
+{% block last_3_sections %}
+
+	  <div class="divider"></div>
+	  <div class="section" id="section-{{ toc|length|add:7 }}">
+		<h2>Human <span class="orange">{{ stage_capitalize }}</span> {{ image_type|capfirst }}</h2>
+		<img src="{{ target_stage_image_full_path }}" />
+	  </div>
+
+{% endblock last_3_sections %}

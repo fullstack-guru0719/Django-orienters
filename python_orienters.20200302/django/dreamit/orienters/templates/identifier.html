@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+{{ stage|capfirst }} {{ target|capfirst }}
+{% endblock title %}
+
+{% block content %}
+<h1>{{ stage|capfirst }} {{ target|capfirst }}</h1>
+
+<div class="row">
+  <div class="col s4 m2">
+    <a
+      class="waves-effect waves-light btn purple {% if request.resolver_match.url_name in 'identifier_self,identifier_self_detail' %}darken-4 btn-active{% endif %} "
+      href="{% url 'identifier_self' %}" >Self</a>
+  </div>
+  <div class="col s4 m2">
+    <a
+      class="waves-effect waves-light btn teal {% if request.resolver_match.url_name in 'identifier_voice,identifier_voice_detail' %}darken-4 btn-active{% endif %}"
+      href="{% url 'identifier_voice' %}" >Voice</a>
+  </div>
+  <div class="col s4 m2">
+    <a
+      class="waves-effect waves-light btn red {% if request.resolver_match.url_name in 'identifier_person,identifier_person_detail' %}darken-4 btn-active{% endif %}"
+      href="{% url 'identifier_person' %}" >Person</a>
+  </div>
+  <div class="col s4 m2">
+    <a
+      class="waves-effect waves-light btn indigo {% if request.resolver_match.url_name in 'identifier_place,identifier_place_detail' %}darken-4 btn-active{% endif %}"
+      href="{% url 'identifier_place' %}" >Place</a>
+  </div>
+  <div class="col s4 m2">
+    <a
+      class="waves-effect waves-light btn orange {% if request.resolver_match.url_name in 'identifier_event,identifier_event_detail' %}darken-4 btn-active{% endif %}"
+      href="{% url 'identifier_event' %}" >Event</a>
+  </div>
+  <div class="col s4 m2">
+    <a
+      class="waves-effect waves-light btn green {% if request.resolver_match.url_name in 'identifier_object,identifier_object_detail' %}darken-4 btn-active{% endif %}"
+      href="{% url 'identifier_object' %}" >Object</a>
+  </div>
+</div>
+
+{% block content_2 %}
+<form id="identifier-form" role="form" method="post">
+
+<div class="divider"></div>
+<div class="section">
+
+    {% csrf_token %}
+    {# form.as_p #}
+
+    {{ form.words }}
+
+    <div class="row">
+      <div class="input-field col s12">
+        {{ form.dream_name.label_tag }}
+        {{ form.dream_name.label_tag }}
+      </div>
+      <div class="input-field col s12">
+        <input id="dream_name" name="dream_name" type="text" class="validate">
+        {# form.dream_name.label_tag #}
+        {# form.dream_name.errors #}
+      </div>
+    </div>
+
+    {% if stage == 'person' %}
+      <div class="row">
+        <div class="col s12 m3">
+          <label>{{ form.dream_gender.label }}</label>
+        </div>
+      {% for radio in form.dream_gender %}
+        <div class="col s6 m4">
+          <label for="{{ radio.id_for_label }}">
+              {{ radio.tag }}
+              <span>{{ radio.choice_label }}</span>
+          </label>
+        </div>
+      {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="row">
+      <div class="input-field col s12">
+        <input id="dream_description" name="dream_description" type="text" class="validate">
+        {{ form.dream_description.label_tag }}
+        {{ form.dream_description.errors }}
+      </div>
+    </div>
+
+    <div class="row">
+      <button id="continue" type="button" class="waves-effect waves-light btn-small">Continue</button>
+    </div>
+
+</div>
+
+
+<div class="section hide" id="choose-words">
+{% if words.count == 0 %}
+  <h5>Not yet supported</h5>
+  <h6>There are no words defined for this stage</h6>
+{% else %}
+  <h5>Choose the 12 words that best describe how you are orienting yourself:</h5>
+
+  <div class="row">
+{% for word in words %}
+    <div class="col s6 m3">
+      <label>
+        <input type="checkbox" name="unordered_words[]" value="{{ word.pk }}" />
+        <span>{{ word.word }}</span>
+      </label>
+    </div>
+  {% if forloop.counter|divisibleby:4 %}
+  </div>
+  {% if forloop.last %}
+  {% else %}
+  <div class="row">
+  {% endif %}
+  {% endif %}
+{% endfor %}
+
+{% endif %}
+</div>
+
+
+<div class="divider"></div>
+<div class="section hide" id="reorder-words" >
+  <h5>Rank your chosen words in order of significance by dragging and dropping them, with the most significant word at the top:</h5>
+  <div class="collection">
+    <div class="collection-item">word 1</div>
+    <div class="collection-item">word 2</div>
+    <div class="collection-item">word 3</div>
+    <div class="collection-item">word 4</div>
+  </div>
+
+  <div class="row pt-1">
+    <button type="submit" class="waves-effect waves-light btn-small">Submit</button>
+  </div>
+
+</div>
+
+</form>
+
+<div class="divider"></div>
+<div class="section">
+  <h5>Or view a report from a previously identified situation</h5>
+
+  <table>
+    <caption>Page {{ reports.number }} of {{ reports.paginator.num_pages }}</caption>
+    <thead>
+      <tr>
+          <th>#</th>
+          <th>Situation</th>
+          <th>Date</th>
+          <th>Identifier</th>
+          <th>User</th>
+      </tr>
+    </thead>
+    <tbody>
+
+{% for report in reports %}
+
+    <tr>
+      <td>{{ report.id }}</td>
+      <td><a href="{% url detail_url id=report.id %}">{{ report.dream_name }}</a></td>
+      <td>{{ report.dream_date|date:"DATETIME_FORMAT" }}</td>
+      <td>{{ stage|capfirst }} {{ target|capfirst }}</td>
+      <td>{# report.user_id #} {{ report.user.username }}</td>
+    </tr>
+
+{% endfor %}
+    </tbody>
+  </table>
+
+{% include 'shared/pagination.html' %}
+
+</div>
+
+{% endblock content_2 %}
+
+{% endblock content %}
+
+
+
+{% block js %}
+<script src="{% static 'js/sortable.min.js' %}"></script>
+<script src="{% static 'js/identifier.js' %}"></script>
+{% endblock js %}

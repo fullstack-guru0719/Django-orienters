@@ -1,0 +1,151 @@
+{% extends 'identifier_pdf.html' %}
+{% load orienters_extras %}
+
+{% block title %}
+<span class="large purple">{{ target }} {{ stage|capfirst }}</span> <span class="medium">Report</span>
+{% endblock title %}
+
+
+
+
+
+
+{% block toc %}
+	<div>Page 4 : <a href="#section-1">{{ pdf_pages.title_2 }}</a></div>
+	{% for t in toc %}
+		<div>Page
+		{% if forloop.first %}
+			{{ forloop.counter0|add:5 }} : <a href="#section-{{ forloop.counter0|add:5 }}">
+		{% else %}
+			{% i_m_i_p_o forloop.counter0 3 5 %} : <a href="#section-{% i_m_i_p_o forloop.counter0 3 5 %}">
+		{% endif %}
+		{{ t }}</a></div>
+	{% endfor %}
+	<div>Page {% i_m_i_p_o toc|length 3 5 %} : <a href="#section-{% i_m_i_p_o toc|length 3 5 %}">Human {{ stage|capfirst }} {{ image_type|capfirst }}</a></div>
+{% endblock toc %}
+
+
+
+
+{% block content_3 %}
+
+	{% for aspect_description in aspect_descriptions %}
+	<div class="divider"></div>
+
+		<div class="section section-{{ forloop.counter0|add:5 }}" name="section-{{ forloop.counter0|add:5 }}">
+
+		<h2>{{ toc|g_e_a_i:forloop.counter0 }}</h2>
+
+		<!-- <pdf:spacer height="10px" /> -->
+
+		{% for a_d in aspect_description %}
+
+			<pdf:spacer height="10px" />
+
+			<div class="row tagline">
+				{% v_f_p_a_x_y words_left forloop.parentloop.counter0 forloop.counter0 'title_1' %} {% v_f_p_a_x_y words_right forloop.parentloop.counter0 forloop.counter0 'title_2' %}</strong>
+			</div>
+				<div class="row">
+					{% v_f_p_a_x_y words_left forloop.parentloop.counter0 forloop.counter0 'text_1' %}
+					{% v_f_p_a_x_y words_right forloop.parentloop.counter0 forloop.counter0 'text_2' %}
+					<br/>
+					{% v_f_p_a_x_y words_left forloop.parentloop.counter0 forloop.counter0 'text_3' %}
+					{% v_f_p_a_x_y words_right forloop.parentloop.counter0 forloop.counter0 'text_4' %}
+					<br/>
+					{% v_f_p_a_x_y words_left forloop.parentloop.counter0 forloop.counter0 'text_5' %}
+					{% v_f_p_a_x_y words_right forloop.parentloop.counter0 forloop.counter0 'text_6' %}
+				</div>
+		{% endfor %}
+		</div>
+	{% endfor %}
+
+{% endblock content_3 %}
+
+
+{% block last_3_sections %}
+
+<div class="divider"></div>
+
+<div id="content-aspects" class="section content">
+
+<h2>Human <span class="orange">{{ stage_capitalize }}</span> {{ image_type|capfirst }}</h2>
+
+<table id="image-grid">
+
+{# if target == 'self|self' #}
+{% if type == 'self|self' %}
+
+	<tr>
+		<td>&nbsp;</td>
+	{% for value in ing_cadence %}
+		{% if value %}
+				<td><img src="{{static_full_path}}/{{ 'img/'|addstr:value|addstr:'.gif' }}" title="{{ value }}" width="50" height="78" /></td>
+		{% endif %}
+	{% endfor %}
+	</tr>
+
+	{% for value in ing_cadence %}
+		{% if value %}
+			{% if aspect_descriptions|g_e_a_i:forloop.counter0 %}
+			<tr>
+				<td><img src="{{static_full_path}}/{{ 'img/h-'|addstr:value|addstr:'.gif' }}" title="{{ value }}" /></td>
+				{# for j, row in aspect_descriptions[key] #}
+				{% for aspect_description_at_key in aspect_descriptions|g_e_a_i:forloop.counter0 %}
+				<td><img
+				{% if forloop.counter == forloop.parentloop.counter %}
+					src="{% construct_pdf_static_image_url static_full_path archetype_images forloop.counter0 %}"
+				{% else %}
+					src="{{static_full_path}}/{{ 'img/'|addstr:aspect_description_at_key.image }}"
+				{% endif %}
+					class="tooltip" /></td>
+				{% endfor %}
+			</tr>
+			{% endif %}
+		{% endif %}
+	{% endfor %}
+
+{% else %}
+{# if type == 'self|person' or type == 'person|self' or type == 'person|person' #}
+
+	<tr>
+		<td class="cell-with-name">{{ first_name1 }} and {{ first_name2 }}</td>
+	{% for value in ing_cadence %}
+		{% if value %}
+				<td><img src="{{static_full_path}}/{{ 'img/'|addstr:value|addstr:'.gif' }}" title="{{ value }}" width="50" height="78" /></td>
+		{% endif %}
+	{% endfor %}
+		<td class="cell-with-name-rotated">{{ first_name2 }}</td>
+	</tr>
+
+	{% for value in ing_cadence %}
+		{% if value %}
+			{# if aspect_descriptions[key] #}
+			{% if aspect_descriptions|g_e_a_i:forloop.counter0 %}
+			<tr>
+				<td><img src="{{static_full_path}}/{{ 'img/h-'|addstr:value|addstr:'.gif' }}" title="{{ value }}" /></td>
+				{% for aspect_description_at_key in aspect_descriptions|g_e_a_i:forloop.counter0 %}
+				<td><img
+					src="{{static_full_path}}/{{ 'img/'|addstr:aspect_description_at_key.image }}"
+					class="tooltip" /></td>
+				{% endfor %}
+				<td><img src="{% construct_pdf_static_image_url static_full_path archetype_images2 forloop.counter0 %}" /></td>
+			</tr>
+			{% endif %}
+		{% endif %}
+	{% endfor %}
+
+	<tr>
+		<td class="cell-with-name">{{ first_name1 }}</td>
+	{% for value in archetype_images1 %}
+		<td><img src="{{static_full_path}}/{{ 'img/'|addstr:value }}" /></td>
+		{% endfor %}
+	</tr>
+	</table>
+
+{% endif %}
+
+</table>
+
+</div>
+
+{% endblock last_3_sections %}

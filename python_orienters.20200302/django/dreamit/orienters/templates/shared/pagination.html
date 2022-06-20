@@ -1,0 +1,43 @@
+<ul class="pagination">
+  {% if reports.has_previous %}
+    <li class="waves-effect">
+      <a href="?page=1">&laquo; first</a>
+    </li>
+    <li class="waves-effect">
+      <a href="?page={{ reports.previous_page_number }}">previous</a>
+    </li>
+  {% else %}
+    <li class="disabled">
+      <a href="#!">&laquo; first</a>
+    </li>
+    <li class="disabled">
+      <a href="#!">previous</a>
+    </li>
+  {% endif %}
+
+  {% for num in reports.paginator.page_range %}
+    {% ifequal num reports.number %}
+      <li class="active"><a href="#!">{{ num }}</a></li>
+    {% else %}
+      <li class="waves-effect">
+        <a href="?page={{ num }}"> {{ num }}</a>
+      </li>
+    {% endifequal %}
+  {% endfor %}
+
+  {% if reports.has_next %}
+    <li class="waves-effect">
+      <a href="?page={{ reports.next_page_number }}">next</a>
+    </li>
+    <li class="waves-effect">
+      <a href="?page={{ reports.paginator.num_pages }}">last &raquo;</a>
+    </li>
+  {% else %}
+    <li class="disabled">
+      <a href="#!">next</a>
+    </li>
+    <li class="disabled">
+      <a href="#!">last &raquo;</a>
+    </li>
+  {% endif %}
+</div>
